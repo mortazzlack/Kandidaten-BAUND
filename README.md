@@ -66,7 +66,7 @@ Oberfläche neu bauen zu müssen.
 
 ```
 baund-pipeline/
-├─ server.js        Express-Server + REST-API + Speicherlogik
+├─ server.js        Node-HTTP-Server (ohne Dependencies) + REST-API + Speicherlogik
 ├─ data.json         Kandidaten-Daten (Startdaten / persistenter Stand)
 ├─ package.json
 └─ public/
@@ -82,9 +82,13 @@ baund-pipeline/
 | GET     | `/api/candidates?archived=false`                   | Kandidaten laden                    |
 | POST    | `/api/candidates`                                   | Neuen Kandidaten anlegen            |
 | PATCH   | `/api/candidates/:id`                               | Kandidat bearbeiten / archivieren   |
+| DELETE  | `/api/candidates/:id`                               | Kandidat endgültig löschen          |
 | POST    | `/api/candidates/:id/clients`                       | Kunden-Präsentation hinzufügen      |
-| PATCH   | `/api/candidates/:id/clients/:idx`                  | Status eines Kunden ändern          |
+| PATCH   | `/api/candidates/:id/clients/:idx`                  | Status und/oder Name eines Kunden ändern |
+| DELETE  | `/api/candidates/:id/clients/:idx`                  | Kunden von Kandidat entfernen       |
 | POST    | `/api/candidates/:id/clients/:idx/events`           | Termin hinzufügen                   |
+| PATCH   | `/api/candidates/:id/clients/:idx/events/:eventIdx` | Termin bearbeiten                   |
+| DELETE  | `/api/candidates/:id/clients/:idx/events/:eventIdx` | Termin löschen (mind. 1 muss bleiben)|
 | POST    | `/api/candidates/:id/clients/:idx/deal`             | Deal eintragen (Value/Start/Frist)  |
 | POST    | `/api/candidates/:id/todos`                         | To-Do hinzufügen                    |
 | PATCH   | `/api/candidates/:id/todos/:idx`                    | To-Do abhaken                       |

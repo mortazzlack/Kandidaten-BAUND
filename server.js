@@ -192,6 +192,19 @@ route("PATCH", "/api/candidates/:id/clients/:idx", async (req, res, params) => {
   const body = await readBody(req);
 
   if (typeof body.status === "string") client.status = body.status;
+  if (typeof body.name === "string" && body.name.trim()) client.name = body.name.trim();
+  touch(candidate);
+  writeData(data);
+  send(res, 200, candidate);
+});
+
+route("DELETE", "/api/candidates/:id/clients/:idx", (req, res, params) => {
+  const data = readData();
+  const candidate = findCandidate(data, params.id);
+  if (!candidate) return send(res, 404, { error: "Kandidat nicht gefunden." });
+  if (!candidate.clients[params.idx]) return send(res, 404, { error: "Kunde nicht gefunden." });
+
+  candidate.clients.splice(params.idx, 1);
   touch(candidate);
   writeData(data);
   send(res, 200, candidate);
@@ -214,6 +227,47 @@ route("POST", "/api/candidates/:id/clients/:idx/events", async (req, res, params
   touch(candidate);
   writeData(data);
   send(res, 201, candidate);
+});
+
+route("PATCH", "/api/candidates/:id/clients/:idx/events/:eventIdx", async (req, res, params) => {
+  const data = readData();
+  const candidate = findCandidate(data, params.id);
+  if (!candidate) return send(res, 404, { error: "Kandidat nicht gefunden." });
+  const client = candidate.clients[params.idx];
+  if (!client) return send(res, 404, { error: "Kunde nicht gefunden." });
+  const event = client.events[params.eventIdx];
+  if (!event) return send(res, 404, { error: "Termin nicht gefunden." });
+  const body = await readBody(req);
+
+  if (!body.date || !body.label) return send(res, 400, { error: "Datum und Bezeichnung sind erforderlich." });
+  event.date = body.date;
+  event.label = String(body.label).trim();
+  if (body.time) event.time = body.time;
+  else delete event.time;
+
+  // Status anhand des jetzt letzten Termins neu ableiten (chronologisch letzter Eintrag in der Liste)
+  const last = client.events[client.events.length - 1];
+  if (client.status !== "deal") client.status = deriveStatusFromEvent(last.label, last.date);
+  touch(candidate);
+  writeData(data);
+  send(res, 200, candidate);
+});
+
+route("DELETE", "/api/candidates/:id/clients/:idx/events/:eventIdx", (req, res, params) => {
+  const data = readData();
+  const candidate = findCandidate(data, params.id);
+  if (!candidate) return send(res, 404, { error: "Kandidat nicht gefunden." });
+  const client = candidate.clients[params.idx];
+  if (!client) return send(res, 404, { error: "Kunde nicht gefunden." });
+  if (!client.events[params.eventIdx]) return send(res, 404, { error: "Termin nicht gefunden." });
+  if (client.events.length <= 1) return send(res, 400, { error: "Ein Kunde braucht mindestens einen Termin – lösche stattdessen den ganzen Kunden." });
+
+  client.events.splice(params.eventIdx, 1);
+  const last = client.events[client.events.length - 1];
+  if (client.status !== "deal") client.status = deriveStatusFromEvent(last.label, last.date);
+  touch(candidate);
+  writeData(data);
+  send(res, 200, candidate);
 });
 
 route("POST", "/api/candidates/:id/clients/:idx/deal", async (req, res, params) => {

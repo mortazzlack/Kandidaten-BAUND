@@ -19,6 +19,8 @@
     addingDeal: {},
     addingTodo: {},
     addingNote: {},
+    editingClient: {},
+    editingEvent: {},
   };
 
   // ---------- helpers ----------
@@ -81,19 +83,38 @@
 
   function timelineHtml(c) {
     var events = [];
-    c.clients.forEach(function (cl) {
-      cl.events.forEach(function (ev) {
-        events.push({ date: ev.date, time: ev.time, label: ev.label, client: cl.name, color: companyColor(c, cl.name) });
+    c.clients.forEach(function (cl, clientIdx) {
+      cl.events.forEach(function (ev, eventIdx) {
+        events.push({ date: ev.date, time: ev.time, label: ev.label, client: cl.name, color: companyColor(c, cl.name), clientIdx: clientIdx, eventIdx: eventIdx });
       });
     });
     events.sort(function (a, b) { return new Date(b.date + "T" + (b.time || "00:00")) - new Date(a.date + "T" + (a.time || "00:00")); });
     if (!events.length) return '<div class="more-row">Noch keine Termine erfasst.</div>';
     return '<div class="timeline">' + events.map(function (ev, i) {
+      var key = c.id + "-" + ev.clientIdx + "-" + ev.eventIdx;
       var dateText = fmtDate(ev.date) + (ev.time ? " · " + ev.time + " Uhr" : "");
       var label = /vorgestellt|vereinbart|absage/i.test(ev.label) ? ev.label + " · " + ev.client : ev.label + " bei " + ev.client;
+      var editFormHtml = state.editingEvent[key] ? (
+        '<div class="mini-form">' +
+        '<input type="text" id="tl-edit-label-' + key + '" placeholder="Bezeichnung" value="' + ev.label.replace(/"/g, "&quot;") + '">' +
+        '<input type="date" id="tl-edit-date-' + key + '" value="' + ev.date + '">' +
+        '<input type="time" id="tl-edit-time-' + key + '" value="' + (ev.time || "") + '">' +
+        '<button class="mini-btn" data-save-tl-event="' + key + '">Speichern</button>' +
+        '<button class="mini-btn" data-cancel-tl-event="' + key + '">Abbrechen</button>' +
+        '</div>'
+      ) : "";
       return '<div class="tl-item">' +
         '<div class="tl-rail"><span class="tl-dot" style="background:' + ev.color + '"></span>' + (i < events.length - 1 ? '<span class="tl-line"></span>' : '') + '</div>' +
-        '<div class="tl-content"><div class="tl-date">' + dateText + '</div><div class="tl-label">' + label + '</div></div>' +
+        '<div class="tl-content">' +
+        '<div class="tl-top">' +
+        '<div><div class="tl-date">' + dateText + '</div><div class="tl-label">' + label + '</div></div>' +
+        '<div class="tl-actions">' +
+        '<button data-edit-tl-event="' + key + '" title="Termin bearbeiten"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>' +
+        '<button class="tl-delete" data-delete-tl-event="' + key + '" title="Termin löschen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0-1 13a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1L6 7"/></svg></button>' +
+        '</div>' +
+        '</div>' +
+        editFormHtml +
+        '</div>' +
         '</div>';
     }).join("") + '</div>';
   }
@@ -122,11 +143,24 @@
       return '<option value="' + s + '"' + (cl.status === s ? " selected" : "") + '>' + statusLabel[s] + '</option>';
     }).join("");
 
+    var renameFormHtml = state.editingClient[eventKey] ? (
+      '<div class="mini-form">' +
+      '<input type="text" id="client-rename-' + eventKey + '" placeholder="Kundenname" value="' + cl.name.replace(/"/g, "&quot;") + '">' +
+      '<button class="mini-btn" data-save-client-name="' + eventKey + '">Speichern</button>' +
+      '<button class="mini-btn" data-cancel-client-name="' + eventKey + '">Abbrechen</button>' +
+      '</div>'
+    ) : "";
+
     return '<div class="client-block">' +
       '<div class="client-block-head">' +
       '<span class="cname"><span class="c-dot" style="background:' + companyColor(c, cl.name) + '"></span>' + cl.name + '</span>' +
+      '<div class="client-block-icons">' +
+      '<button data-edit-client-name="' + eventKey + '" title="Kunde umbenennen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>' +
+      '<button class="ci-delete" data-delete-client="' + eventKey + '" data-name="' + cl.name.replace(/"/g, "&quot;") + '" title="Kunde löschen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0-1 13a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1L6 7"/></svg></button>' +
       (isDeal ? '<span class="status-chip deal">Deal</span>' : '<select class="status-chip" data-status-select="' + c.id + '|' + idx + '" style="background:var(--surface-2);color:var(--text-muted);border:1px solid var(--border);">' + statusOptions + '</select>') +
       '</div>' +
+      '</div>' +
+      renameFormHtml +
       (isDeal ? "" :
         '<div class="client-actions">' +
         '<button class="mini-btn" data-add-event="' + eventKey + '">+ Termin</button>' +
@@ -238,7 +272,7 @@
     if (state.onlyAlerts) list = list.filter(isStale);
 
     document.getElementById("countLabel").textContent =
-      (state.view === "archived" ? list.length + " archivierte Kandidaten" : list.length + " aktive Kandidaten");
+      list.length + (state.view === "archived" ? " archiviert" : " aktiv");
 
     var staleCount = state.candidates.filter(isStale).length;
     document.getElementById("alertText").textContent = staleCount + " brauch" + (staleCount === 1 ? "t" : "en") + " Aufmerksamkeit";
@@ -301,6 +335,85 @@
         var parts = sel.getAttribute("data-status-select").split("|");
         await api("PATCH", "/api/candidates/" + parts[0] + "/clients/" + parts[1], { status: sel.value });
         loadCandidates();
+      });
+    });
+
+    wall.querySelectorAll("[data-edit-client-name]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        state.editingClient[btn.getAttribute("data-edit-client-name")] = true;
+        render();
+      });
+    });
+    wall.querySelectorAll("[data-cancel-client-name]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        state.editingClient[btn.getAttribute("data-cancel-client-name")] = false;
+        render();
+      });
+    });
+    wall.querySelectorAll("[data-save-client-name]").forEach(function (btn) {
+      btn.addEventListener("click", async function () {
+        var key = btn.getAttribute("data-save-client-name");
+        var parts = key.split("-");
+        var candidateId = parts[0], idx = parts[1];
+        var input = document.getElementById("client-rename-" + key);
+        if (input && input.value.trim()) {
+          await api("PATCH", "/api/candidates/" + candidateId + "/clients/" + idx, { name: input.value.trim() });
+        }
+        state.editingClient[key] = false;
+        loadCandidates();
+      });
+    });
+    wall.querySelectorAll("[data-delete-client]").forEach(function (btn) {
+      btn.addEventListener("click", async function () {
+        var key = btn.getAttribute("data-delete-client");
+        var parts = key.split("-");
+        var candidateId = parts[0], idx = parts[1];
+        var name = btn.getAttribute("data-name");
+        if (!window.confirm(name + " wirklich als Kunde entfernen? Alle zugehörigen Termine gehen verloren.")) return;
+        await api("DELETE", "/api/candidates/" + candidateId + "/clients/" + idx);
+        loadCandidates();
+      });
+    });
+
+    wall.querySelectorAll("[data-edit-tl-event]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        state.editingEvent[btn.getAttribute("data-edit-tl-event")] = true;
+        render();
+      });
+    });
+    wall.querySelectorAll("[data-cancel-tl-event]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        state.editingEvent[btn.getAttribute("data-cancel-tl-event")] = false;
+        render();
+      });
+    });
+    wall.querySelectorAll("[data-save-tl-event]").forEach(function (btn) {
+      btn.addEventListener("click", async function () {
+        var key = btn.getAttribute("data-save-tl-event");
+        var parts = key.split("-");
+        var candidateId = parts[0], clientIdx = parts[1], eventIdx = parts[2];
+        var label = document.getElementById("tl-edit-label-" + key).value.trim();
+        var date = document.getElementById("tl-edit-date-" + key).value;
+        var time = document.getElementById("tl-edit-time-" + key).value;
+        if (label && date) {
+          await api("PATCH", "/api/candidates/" + candidateId + "/clients/" + clientIdx + "/events/" + eventIdx, { label: label, date: date, time: time || undefined });
+        }
+        state.editingEvent[key] = false;
+        loadCandidates();
+      });
+    });
+    wall.querySelectorAll("[data-delete-tl-event]").forEach(function (btn) {
+      btn.addEventListener("click", async function () {
+        var key = btn.getAttribute("data-delete-tl-event");
+        var parts = key.split("-");
+        var candidateId = parts[0], clientIdx = parts[1], eventIdx = parts[2];
+        if (!window.confirm("Diesen Termin wirklich löschen?")) return;
+        try {
+          await api("DELETE", "/api/candidates/" + candidateId + "/clients/" + clientIdx + "/events/" + eventIdx);
+          loadCandidates();
+        } catch (err) {
+          window.alert(err.message);
+        }
       });
     });
 
@@ -411,6 +524,13 @@
     btn.classList.add("active");
     state.view = btn.getAttribute("data-view");
     loadCandidates();
+  });
+
+  document.getElementById("refreshBtn").addEventListener("click", async function () {
+    var btn = this;
+    btn.classList.add("spinning");
+    await loadCandidates();
+    setTimeout(function () { btn.classList.remove("spinning"); }, 400);
   });
 
   document.getElementById("alertChip").addEventListener("click", function () {
