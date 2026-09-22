@@ -62,12 +62,41 @@ nächste sinnvolle Schritt eine echte Datenbank (z. B. das kostenlose
 Postgres-Plugin direkt in Railway) – das können wir nachrüsten, ohne die
 Oberfläche neu bauen zu müssen.
 
+### Lösung: Railway Volume (empfohlen als schneller nächster Schritt)
+
+Ein Volume ist ein persistenter Speicherbereich, der Redeploys übersteht.
+Der Server unterstützt das bereits über die Umgebungsvariable `DATA_FILE`
+– du musst dafür nichts programmieren, nur in Railway einrichten:
+
+1. Im Railway-Projekt auf deinen Service klicken, dann oben den Reiter
+   **"Volumes"** öffnen (teils unter "Settings" zu finden, je nach
+   Railway-Version).
+2. **"+ New Volume"** (oder "Add Volume") klicken.
+3. Als **Mount Path** `/data` eintragen und speichern. Railway legt jetzt
+   bei jedem Deploy ein Verzeichnis `/data` an, das dauerhaft erhalten
+   bleibt (unabhängig vom Code-Container).
+4. Zum Service unter **"Variables"** eine neue Umgebungsvariable anlegen:
+   - Name: `DATA_FILE`
+   - Wert: `/data/data.json`
+5. Einmal neu deployen (z. B. "Redeploy" klicken, oder einfach den nächsten
+   `git push` abwarten).
+
+Ab jetzt schreibt und liest der Server `data.json` aus `/data` statt aus
+dem Projektordner. Der erste Start befüllt diese Datei einmalig mit den
+mitgelieferten Beispieldaten (`data.seed.json`), danach bleiben alle
+Änderungen unabhängig davon erhalten, wie oft du neuen Code pushst.
+
+**Wichtig:** Volumes bei Railway sind aktuell auf **einen** Service/eine
+Instanz begrenzt (kein horizontales Skalieren) – für deinen Anwendungsfall
+(ein Nutzer, eine Instanz) ist das aber genau richtig.
+
 ## Projektstruktur
 
 ```
 baund-pipeline/
 ├─ server.js        Node-HTTP-Server (ohne Dependencies) + REST-API + Speicherlogik
-├─ data.json         Kandidaten-Daten (Startdaten / persistenter Stand)
+├─ data.json         Kandidaten-Daten (lokaler/persistenter Stand ohne Volume)
+├─ data.seed.json    Beispieldaten, mit denen ein frisches Volume befüllt wird
 ├─ package.json
 └─ public/
    ├─ index.html     Oberfläche

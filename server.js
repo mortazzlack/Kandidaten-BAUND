@@ -8,7 +8,11 @@ const path = require("path");
 const { URL } = require("url");
 
 const PORT = process.env.PORT || 3000;
-const DATA_FILE = path.join(__dirname, "data.json");
+// DATA_FILE kann per Umgebungsvariable auf einen persistenten Speicherort
+// zeigen (z. B. ein Railway-Volume unter /data/data.json), damit die Daten
+// einen Redeploy überleben. Ohne die Variable bleibt alles wie bisher.
+const DATA_FILE = process.env.DATA_FILE || path.join(__dirname, "data.json");
+const SEED_FILE = path.join(__dirname, "data.seed.json");
 const PUBLIC_DIR = path.join(__dirname, "public");
 
 const MIME = {
@@ -25,7 +29,13 @@ const MIME = {
 
 function readData() {
   if (!fs.existsSync(DATA_FILE)) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify({ candidates: [], nextId: 1 }, null, 2));
+    // Erster Start an diesem Speicherort (z. B. frisch angelegtes Volume):
+    // mit den mitgelieferten Beispieldaten befüllen, falls vorhanden.
+    const seed = fs.existsSync(SEED_FILE)
+      ? fs.readFileSync(SEED_FILE, "utf8")
+      : JSON.stringify({ candidates: [], nextId: 1 }, null, 2);
+    fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
+    fs.writeFileSync(DATA_FILE, seed);
   }
   return JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
 }

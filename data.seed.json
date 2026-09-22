@@ -1,0 +1,187 @@
+{
+  "nextId": 8,
+  "candidates": [
+    {
+      "id": 1,
+      "name": "Lena Vogt",
+      "role": "Senior DevOps Engineer",
+      "archived": false,
+      "lastUpdated": "2026-09-20",
+      "clients": [
+        {
+          "name": "Heimann Ingenieure",
+          "status": "ausstehend",
+          "events": [
+            { "date": "2026-09-12", "label": "Vorgestellt" },
+            { "date": "2026-09-18", "time": "15:30", "label": "1. Vorstellungsgespräch (vor Ort)" },
+            { "date": "2026-09-29", "time": "11:00", "label": "2. Vorstellungsgespräch (Teams)" }
+          ]
+        },
+        {
+          "name": "Kando Ingenieure",
+          "status": "vorgestellt",
+          "events": [
+            { "date": "2026-09-19", "label": "Vorgestellt" }
+          ]
+        }
+      ],
+      "todos": [
+        { "text": "Referenzen einholen", "done": false, "created": "2026-09-15" },
+        { "text": "Feedback Heimann einholen", "done": false, "created": "2026-09-19" },
+        { "text": "Lebenslauf final prüfen", "done": true, "created": "2026-09-12" }
+      ],
+      "notes": [
+        { "text": "Bevorzugt Remote, ist aber offen für Hybrid bei Heimann. Verfügbar ab November.", "created": "2026-09-14" }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Marco Feldmann",
+      "role": "IT Security Consultant",
+      "archived": false,
+      "lastUpdated": "2026-09-22",
+      "clients": [
+        {
+          "name": "Ing.FTG",
+          "status": "deal",
+          "value": 18500,
+          "start": "01.11.2026",
+          "refund": "bis 01.02.2027",
+          "events": [
+            { "date": "2026-09-05", "label": "Vorgestellt" },
+            { "date": "2026-09-15", "time": "11:00", "label": "1. Vorstellungsgespräch (Teams)" },
+            { "date": "2026-09-20", "label": "Angebot angenommen – Deal vereinbart" }
+          ]
+        }
+      ],
+      "todos": [
+        { "text": "Onboarding-Unterlagen senden", "done": true, "created": "2026-09-20" },
+        { "text": "Rechnung stellen", "done": false, "created": "2026-09-20" }
+      ],
+      "notes": [
+        { "text": "Start steht fest. Kunde möchte kurz vor Start noch ein Kennenlernen im Team.", "created": "2026-09-21" }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Julia Brandt",
+      "role": "Product Manager",
+      "archived": false,
+      "lastUpdated": "2026-09-16",
+      "clients": [
+        {
+          "name": "Kando Ingenieure",
+          "status": "ausstehend",
+          "events": [
+            { "date": "2026-09-10", "label": "Vorgestellt" },
+            { "date": "2026-09-26", "time": "10:00", "label": "2. Vorstellungsgespräch (Teams)" }
+          ]
+        },
+        {
+          "name": "Heimann Ingenieure",
+          "status": "abgesagt",
+          "events": [
+            { "date": "2026-09-08", "label": "Vorgestellt" },
+            { "date": "2026-09-14", "label": "Absage erhalten" }
+          ]
+        }
+      ],
+      "todos": [
+        { "text": "Referenzen einholen", "done": false, "created": "2026-09-11" },
+        { "text": "Gehaltsvorstellung bestätigen", "done": true, "created": "2026-09-09" },
+        { "text": "2. Interview vorbereiten", "done": false, "created": "2026-09-16" }
+      ],
+      "notes": [
+        { "text": "Gehaltsvorstellung 78.000 € brutto, bei Kando bislang keine Einwände dazu.", "created": "2026-09-16" }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Tarek Amir",
+      "role": "Cloud Architect",
+      "archived": false,
+      "lastUpdated": "2026-09-13",
+      "clients": [
+        {
+          "name": "Ing.FTG",
+          "status": "vorgestellt",
+          "events": [{ "date": "2026-09-13", "label": "Vorgestellt" }]
+        }
+      ],
+      "todos": [{ "text": "Rückmeldung Kunde einholen", "done": false, "created": "2026-09-13" }],
+      "notes": []
+    },
+    {
+      "id": 5,
+      "name": "David Krüger",
+      "role": "Engineering Lead",
+      "archived": false,
+      "lastUpdated": "2026-09-22",
+      "clients": [
+        {
+          "name": "Heimann Ingenieure",
+          "status": "deal",
+          "value": 26500,
+          "start": "01.10.2026",
+          "refund": "bis 01.01.2027",
+          "events": [
+            { "date": "2026-08-20", "label": "Vorgestellt" },
+            { "date": "2026-08-28", "time": "09:00", "label": "1. Vorstellungsgespräch (vor Ort)" },
+            { "date": "2026-09-05", "label": "Angebot angenommen – Deal vereinbart" }
+          ]
+        }
+      ],
+      "todos": [
+        { "text": "Vertragsentwurf an Kunde", "done": true, "created": "2026-09-06" },
+        { "text": "Startdatum abstimmen", "done": false, "created": "2026-09-18" }
+      ],
+      "notes": [{ "text": "Möchte vor Start noch zwei Urlaubstage klären.", "created": "2026-09-19" }]
+    },
+    {
+      "id": 6,
+      "name": "Omar Reyes",
+      "role": "Backend Engineer",
+      "archived": true,
+      "lastUpdated": "2026-08-02",
+      "clients": [
+        {
+          "name": "Heimann Ingenieure",
+          "status": "deal",
+          "value": 21000,
+          "start": "01.08.2026",
+          "refund": "abgelaufen am 01.11.2026",
+          "events": [
+            { "date": "2026-07-10", "label": "Vorgestellt" },
+            { "date": "2026-07-18", "time": "10:00", "label": "1. Vorstellungsgespräch (vor Ort)" },
+            { "date": "2026-07-25", "label": "Angebot angenommen – Deal vereinbart" }
+          ]
+        }
+      ],
+      "todos": [{ "text": "Rechnung gestellt", "done": true, "created": "2026-08-01" }],
+      "notes": [{ "text": "Placement abgeschlossen, Rückvergütungsfrist ausgelaufen.", "created": "2026-08-02" }]
+    },
+    {
+      "id": 7,
+      "name": "Katrin Bosch",
+      "role": "QA Manager",
+      "archived": true,
+      "lastUpdated": "2026-07-28",
+      "clients": [
+        {
+          "name": "Ing.FTG",
+          "status": "deal",
+          "value": 17300,
+          "start": "15.07.2026",
+          "refund": "abgelaufen am 15.10.2026",
+          "events": [
+            { "date": "2026-06-20", "label": "Vorgestellt" },
+            { "date": "2026-06-30", "time": "13:00", "label": "1. Vorstellungsgespräch (Teams)" },
+            { "date": "2026-07-05", "label": "Angebot angenommen – Deal vereinbart" }
+          ]
+        }
+      ],
+      "todos": [{ "text": "Rechnung gestellt", "done": true, "created": "2026-07-27" }],
+      "notes": []
+    }
+  ]
+}
