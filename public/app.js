@@ -181,11 +181,16 @@
       '<div class="avatar">' + initials(c.name) + '</div>' +
       '<div style="flex:1;"><div class="card-name">' + c.name + '</div><div class="card-role">' + (c.role || "") + '</div></div>' +
       (stale ? '<span class="stale-dot" title="Länger keine Aktivität"></span>' : '') +
+      '<div class="card-head-actions">' +
       '<button class="archive-toggle" data-archive="' + c.id + '" data-target="' + (c.archived ? "false" : "true") + '" title="' + (c.archived ? "Reaktivieren" : "Archivieren") + '">' +
       (c.archived ?
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>' :
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8M10 12h4"/></svg>') +
       '</button>' +
+      '<button class="delete-toggle" data-delete="' + c.id + '" data-name="' + c.name.replace(/"/g, "&quot;") + '" title="Löschen">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0-1 13a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1L6 7"/></svg>' +
+      '</button>' +
+      '</div>' +
       '</div>' +
       dealHtml +
       clientListHtml +
@@ -269,6 +274,16 @@
         var id = btn.getAttribute("data-archive");
         var target = btn.getAttribute("data-target") === "true";
         await api("PATCH", "/api/candidates/" + id, { archived: target });
+        loadCandidates();
+      });
+    });
+
+    wall.querySelectorAll("[data-delete]").forEach(function (btn) {
+      btn.addEventListener("click", async function () {
+        var id = btn.getAttribute("data-delete");
+        var name = btn.getAttribute("data-name");
+        if (!window.confirm(name + " wirklich endgültig löschen? Das kann nicht rückgängig gemacht werden.")) return;
+        await api("DELETE", "/api/candidates/" + id);
         loadCandidates();
       });
     });

@@ -90,8 +90,7 @@ input{ font-family:inherit; }
 
 /* ---------------- wall ---------------- */
 .wall-wrap{ padding: 22px 28px 40px; }
-.wall{ display:flex; gap:18px; overflow-x:auto; align-items:flex-start; padding-bottom:2px; scrollbar-width: none; }
-.wall::-webkit-scrollbar{ display:none; height:0; }
+.wall{ display:flex; gap:18px; align-items:flex-start; }
 
 .card{
   background:var(--surface); border:1px solid var(--border); border-radius:16px;
@@ -103,8 +102,11 @@ input{ font-family:inherit; }
 .card-name{ font-size:15px; font-weight:700; line-height:1.25; }
 .card-role{ font-size:12px; color:var(--text-muted); margin-top:1px; }
 .stale-dot{ width:8px; height:8px; border-radius:50%; background:var(--warning); flex:none; margin-top:4px; box-shadow:0 0 0 3px var(--warning-tint); }
-.archive-toggle{ background:none; border:none; color:var(--text-faint); cursor:pointer; padding:2px; }
-.archive-toggle svg{ width:16px; height:16px; }
+.card-head-actions{ display:flex; align-items:center; gap:2px; flex:none; }
+.archive-toggle, .delete-toggle{ background:none; border:none; color:var(--text-faint); cursor:pointer; padding:3px; border-radius:6px; }
+.archive-toggle:hover, .delete-toggle:hover{ background:var(--surface-2); color:var(--text); }
+.delete-toggle:hover{ color:var(--critical); }
+.archive-toggle svg, .delete-toggle svg{ width:16px; height:16px; }
 
 .deal-block{ background:var(--success-tint); border:1px solid transparent; border-radius:12px; padding:12px 13px; display:flex; flex-direction:column; gap:6px; }
 .deal-block .deal-head{ display:flex; align-items:center; justify-content:space-between; }
@@ -188,6 +190,47 @@ input{ font-family:inherit; }
 
 .empty{ font-size:12px; color:var(--text-faint); padding:16px 4px; text-align:center; }
 
+/* ---------------- desktop: große Karten, 2er-Raster, vertikal scrollbar ---------------- */
+@media (min-width: 761px){
+  .wall-wrap{ padding: 26px 28px 48px; max-width: 1360px; margin: 0 auto; }
+  .wall{ display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; align-items:start; }
+
+  .card{ width:auto; padding:26px 26px 22px; border-radius:20px; gap:18px; }
+  .card-head{ gap:14px; }
+  .avatar{ width:52px; height:52px; border-radius:14px; font-size:18px; }
+  .card-name{ font-size:20px; }
+  .card-role{ font-size:14px; margin-top:2px; }
+  .stale-dot{ width:9px; height:9px; margin-top:6px; }
+  .archive-toggle svg, .delete-toggle svg{ width:19px; height:19px; }
+
+  .deal-block{ padding:16px 18px; border-radius:14px; gap:9px; }
+  .deal-block .deal-client{ font-size:14px; }
+  .deal-block .deal-value{ font-size:21px; }
+  .deal-meta div{ font-size:12.5px; }
+  .deal-meta b{ font-size:14px; }
+
+  .client-row{ padding:12px 14px; border-radius:12px; gap:11px; }
+  .c-dot{ width:10px; height:10px; }
+  .client-row .cname{ font-size:14px; }
+  .client-row .cdate{ font-size:17px; }
+  .client-row .cformat{ font-size:12px; }
+  .status-chip{ font-size:11px; padding:4px 10px; }
+
+  .todo-row{ gap:10px; }
+  .progress-track{ height:6px; }
+  .progress-label{ font-size:12.5px; }
+  .updated{ font-size:12.5px; }
+  .expand-btn{ font-size:13px; }
+
+  .section-title{ font-size:11.5px; }
+  .tl-date{ font-size:14.5px; }
+  .tl-label{ font-size:13px; }
+  .todo-text label{ font-size:14px; }
+  .todo-created{ font-size:11.5px; }
+  .note-date{ font-size:11.5px; }
+  .note-text{ font-size:14px; }
+}
+
 /* ---------------- responsive: mobile = one card per screen ---------------- */
 @media (max-width: 760px){
   .topbar{ padding: calc(14px + env(safe-area-inset-top,0px)) 16px 12px; }
@@ -207,6 +250,7 @@ input{ font-family:inherit; }
   .jump-pill .jp-dot{ width:6px; height:6px; border-radius:50%; background:var(--warning); }
 
   .wall-wrap{ padding: 14px 0 28px; }
-  .wall{ padding: 0 16px 4px; gap: 12px; scroll-snap-type: x mandatory; }
+  .wall{ padding: 0 16px 4px; gap: 12px; overflow-x:auto; scroll-snap-type: x mandatory; scrollbar-width:none; }
+  .wall::-webkit-scrollbar{ display:none; height:0; }
   .card{ width: calc(100vw - 32px); scroll-snap-align: center; }
 }

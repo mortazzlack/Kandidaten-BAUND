@@ -1,0 +1,11 @@
+{
+  "name": "Baund Pipeline",
+  "short_name": "Pipeline",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#eef1f4",
+  "theme_color": "#0f2038",
+  "icons": [
+    { "src": "icon.png", "sizes": "500x500", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
